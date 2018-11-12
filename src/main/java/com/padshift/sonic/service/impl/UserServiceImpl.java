@@ -138,5 +138,13 @@ public class UserServiceImpl implements UserService {
         return userPreferenceRepository.findByGenreId(s);
     }
 
+    @Override
+    public int findUserIdByUserId(int currentuserId) {
+        return userPreferenceRepository.findUserIdByUserId(currentuserId);
+    }
 
+    @Override
+    public ArrayList<Integer> findDistinctUserfromUserPref(int currentuserId) {
+        return userPreferenceRepository.findDistinctUserfromUserPref(currentuserId);
+    }
 }

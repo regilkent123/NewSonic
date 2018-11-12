@@ -538,16 +538,17 @@ public class UserController {
     public void findsimilarUsers(String currentuserId, HttpSession session){
         ArrayList<String> allusers = new ArrayList<>();
 //        ArrayList<User> users = userService.findOtherUser(currentuser);
-        ArrayList<String> users = userService.findDistinctUser(currentuserId);
+        ArrayList<Integer> users = userService.findDistinctUserfromUserPref(Integer.parseInt(currentuserId));
         ArrayList<Integer> genreIds = userService.findDistinctGenre();
         ArrayList<Float> genreweights = new ArrayList<>();
         float gweight = 0;
-        String currentU = userService.findCurrentByUserId(currentuserId);
+        int current = userService.findUserIdByUserId(Integer.parseInt(currentuserId));
+        String currentU = String.valueOf(current);
         System.out.println(currentU);
         allusers.add(currentU);
 
         for (int i=0; i < users.size(); i++){
-            allusers.add(users.get(i));
+            allusers.add(users.get(i).toString());
         }
 
         for (int i = 0; i < allusers.size(); i++) {
@@ -1055,7 +1056,7 @@ public class UserController {
             System.out.print(allusers.get(i));
             for(int j=0; j < vidhistID.size(); j++){
                 VideoDetails vid = videoService.findByVideoid(vidhistID.get(j));
-                UserPreference genweight = userService.findgenreWeightByGenreNameand();
+//                UserPreference genweight = userService.findgenreWeightByGenreNameandUserId();
                 System.out.println("XXXXX "+allusers.get(i)+" "+vid.getVideoid()+" XXXXXX");
                 uhist =  videoService.findByUserIdandVideoid(allusers.get(i),vid.getVideoid());
                 System.out.println(uhist);

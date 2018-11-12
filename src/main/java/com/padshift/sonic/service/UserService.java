@@ -62,4 +62,8 @@ public interface UserService {
     ArrayList<Integer> findDistinctGenre();
 
     UserPreference findByGenreId(int s);
+
+    int findUserIdByUserId(int currentuserId);
+
+    ArrayList<Integer> findDistinctUserfromUserPref(int currentuserId);
 }

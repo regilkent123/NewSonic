@@ -86,6 +86,7 @@ public class UserController {
                 session.setAttribute("userid", checkUser.getUserId());
                 session.setAttribute("username", checkUser.getUserName());
                 session.setAttribute("sessionid", checkUser.getUserId()+getSaltString());
+                session.setAttribute("useragegroup", checkUser.getAgecriteriaId());
                 System.out.println(checkUser.getUserId() + " " + checkUser.getUserName());
 
                 return showHomepage(model, session);
@@ -99,6 +100,8 @@ public class UserController {
     @RequestMapping(value = "/signup", method = RequestMethod.POST)
     public String generalSignup(HttpServletRequest request, Model model, HttpSession session) {
         User newUser = new User();
+        int age;
+        int ageGroup;
         newUser.setUserName(request.getParameter("inputUserName"));
         newUser.setUserPass(request.getParameter("inputPassword"));
         newUser.setUserEmail(request.getParameter("inputEmail"));
@@ -113,15 +116,31 @@ public class UserController {
         String upToNCharacters = bday.substring(0, Math.min(bday.length(), 4));
         System.out.println(upToNCharacters);
 
+        age = year-Integer.parseInt(upToNCharacters);
         newUser.setUserAge(year-Integer.parseInt(upToNCharacters));
         newUser.setUserPersonality(request.getParameter("radio"));
+
+        if(age<=24){
+            ageGroup = 1;
+        }else if(age >=25 && age<=34){
+            ageGroup = 2;
+        }else if(age >=35 && age <=44) {
+            ageGroup = 3;
+        }else if(age >=45 && age <=54) {
+            ageGroup = 4;
+        }else if(age >=55 && age <=64) {
+            ageGroup = 5;
+        }else{
+            ageGroup = 6;
+        }
+        newUser.setAgecriteriaId(ageGroup);
 
         userService.saveUser(newUser);
         User checkUser = userService.findByUsername(request.getParameter("inputUserName"));
         session.setAttribute("userid", checkUser.getUserId());
         session.setAttribute("username", request.getParameter("inputUserName"));
         session.setAttribute("sessionid", checkUser.getUserId()+getSaltString());
-
+        session.setAttribute("useragegroup", checkUser.getAgecriteriaId());
         return showGenreSelection(model,session);
     }
 
@@ -192,70 +211,14 @@ public class UserController {
 
     public void updategenreWeight(int genreid, int userid, float temp){
         User user = userService.findByUserId(userid);
+
+        int agegroup = user.getAgecriteriaId();
+        AgeCriteria useragegroup = userService.findByAgeCriteriaId(agegroup);
+        int totalviews = useragegroup.getAlternativeMusic() + useragegroup.getCountryMusic() + useragegroup.getHiphopMusic() + useragegroup.getHouseMusic() + useragegroup.getPopMusic() + useragegroup.getReggaeMusic() + useragegroup.getReligiousMusic() + useragegroup.getRnbMusic() + useragegroup.getRockMusic();
+
         float userInput = temp;
         float genreAgePop,genreAgeRock, genreAgeAlt, genreAgeRBS, genreAgeCntry, genreAgeHouse, genreAgeReg, genreAgeRel, genreAgeHH;
         float genweight = 0;
-        if(user.getUserAge()<=24){
-            genreAgePop = (float) 10.0;
-            genreAgeRock = (float) 8.0;
-            genreAgeHH = (float) 8.0;
-            genreAgeAlt = (float) 6.0;
-            genreAgeRBS = (float) 6.0;
-            genreAgeCntry = (float) 2.0;
-            genreAgeHouse = (float) 2.0;
-            genreAgeReg = (float) 2.0;
-            genreAgeRel = (float) 2.0;
-        }else if(user.getUserAge()>=25 && user.getUserAge()<=34){
-            genreAgePop = (float) 10.0;
-            genreAgeRock = (float) 8.0;
-            genreAgeHH = (float) 6.0;
-            genreAgeAlt = (float) 4.0;
-            genreAgeCntry = (float) 4.0;
-            genreAgeRBS = (float) 2.0;
-            genreAgeHouse = (float) 2.0;
-            genreAgeReg = (float) 2.0;
-            genreAgeRel = (float) 2.0;
-        }else if(user.getUserAge()>=35 && user.getUserAge()<=44) {
-            genreAgeRock = (float) 10.0;
-            genreAgePop = (float) 8.0;
-            genreAgeCntry = (float) 6.0;
-            genreAgeAlt = (float) 4.0;
-            genreAgeHH = (float) 2.0;
-            genreAgeRBS = (float) 1.0;
-            genreAgeHouse = (float) 1.0;
-            genreAgeReg = (float) 1.0;
-            genreAgeRel = (float) 1.0;
-        }else if(user.getUserAge()>=45 && user.getUserAge()<=54) {
-            genreAgeRock = (float) 10.0;
-            genreAgePop = (float) 8.0;
-            genreAgeCntry = (float) 6.0;
-            genreAgeAlt = (float) 4.0;
-            genreAgeRBS = (float) 2.0;
-            genreAgeHH = (float) 1.0;
-            genreAgeHouse = (float) 1.0;
-            genreAgeReg = (float) 1.0;
-            genreAgeRel = (float) 1.0;
-        }else if(user.getUserAge()>=55 && user.getUserAge()<=64) {
-            genreAgeRock = (float) 10.0;
-            genreAgeCntry = (float) 8.0;
-            genreAgePop = (float) 6.0;
-            genreAgeRBS = (float) 4.0;
-            genreAgeAlt = (float) 2.0;
-            genreAgeHH = (float) 1.0;
-            genreAgeHouse = (float) 1.0;
-            genreAgeReg = (float) 1.0;
-            genreAgeRel = (float) 1.0;
-        }else{
-            genreAgeRock = (float) 10.0;
-            genreAgeCntry = (float) 8.0;
-            genreAgePop = (float) 8.0;
-            genreAgeRBS = (float) 6.0;
-            genreAgeAlt = (float) 4.0;
-            genreAgeHH = (float) 2.0;
-            genreAgeHouse = (float) 1.0;
-            genreAgeReg = (float) 1.0;
-            genreAgeRel = (float) 1.0;
-        }
 
         float genrePTPop,genrePTRock, genrePTAlt, genrePTRBS, genrePTCntry, genrePTHouse, genrePTReg, genrePTRel, genrePTHH;
 
@@ -291,51 +254,55 @@ public class UserController {
         float genreAge = 0;
         float genrePT =0;
 
-        if(genreid == 1){
+        if(genreid == 1 && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),1).getPrefWeight();
-            genreAge = genreAgePop;
+            genreAge = useragegroup.getPopMusic()/totalviews;
             genrePT = genrePTPop;
         }
-        if(genreid == 2){
+        if(genreid == 2 && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),2).getPrefWeight();
-            genreAge = genreAgeRock;
+            genreAge = useragegroup.getRockMusic()/totalviews;
             genrePT = genrePTRock;
         }
 
-        if(genreid == 3){
+        if(genreid == 3  && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),3).getPrefWeight();
-            genreAge = genreAgeAlt;
+            genreAge = useragegroup.getAlternativeMusic()/totalviews;
             genrePT = genrePTAlt;
         }
-        if(genreid == 4){
+        if(genreid == 4  && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),4).getPrefWeight();
-            genreAge = genreAgeRBS;
+            genreAge = useragegroup.getRnbMusic()/totalviews;
             genrePT = genrePTRBS;
         }
-        if(genreid == 5){
+        if(genreid == 5  && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),5).getPrefWeight();
-            genreAge = genreAgeCntry;
+            genreAge = useragegroup.getCountryMusic()/totalviews;
             genrePT = genrePTCntry;
         }
-        if(genreid == 6){
+        if(genreid == 6  && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),6).getPrefWeight();
-            genreAge = genreAgeHouse;
+            genreAge = useragegroup.getCountryMusic()/totalviews;
             genrePT = genrePTHouse;
         }
-        if(genreid == 7){
+        if(genreid == 7  && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),7).getPrefWeight();
-            genreAge = genreAgeReg;
+            genreAge = useragegroup.getReggaeMusic()/totalviews;
             genrePT = genrePTReg;
         }
-        if(genreid == 8){
+        if(genreid == 8  && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),8).getPrefWeight();
-            genreAge = genreAgeRel;
+            genreAge = useragegroup.getReligiousMusic()/totalviews;
             genrePT = genrePTRel;
         }
-        if(genreid == 9){
+        if(genreid == 9  && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),9).getPrefWeight();
-            genreAge = genreAgeHH;
+            genreAge = useragegroup.getHiphopMusic()/totalviews;
             genrePT = genrePTHH;
+        }
+
+        if(totalviews == 9){
+            genreAge = 1;
         }
 
         float uipercent, agepercent,pertypepercent;
@@ -371,7 +338,7 @@ public class UserController {
 
     @RequestMapping("/homepagev2")
     public String showHomepage(Model model, HttpSession session) {
-
+        updateagecriteria();
         String userid = session.getAttribute("userid").toString();
         System.out.println("tang ina" + userid);
         User user = userService.findByUserId(Integer.parseInt(userid));
@@ -535,6 +502,73 @@ public class UserController {
 
     }
 
+    public void updateagecriteria(){
+        try{
+            for (int i = 0; i < 6; i++) {
+                AgeCriteria age = userService.findByAgeCriteriaId(i);
+            }
+        }catch (Exception e){
+            ArrayList<Integer> agegroups = userService.findDistinctAgeGroup();
+
+            for (int i = 0; i < agegroups.size(); i++) {
+                boolean group1 = agegroups.get(i).equals(1);
+                boolean group2 = agegroups.get(i).equals(2);
+                boolean group3 = agegroups.get(i).equals(3);
+                boolean group4 = agegroups.get(i).equals(4);
+                boolean group5 = agegroups.get(i).equals(5);
+                boolean group6 = agegroups.get(i).equals(6);
+
+                if(group1 == true){
+                    AgeCriteria agecriteria = new AgeCriteria();
+                    agecriteria.setAgeGroup("Age Group 1");
+                    agecriteria.setAgecriteriaId(1);
+                    userService.saveAgeCriteria(agecriteria);
+                    agecriteria = null;
+                }
+
+                if(group2 == true){
+                    AgeCriteria agecriteria = new AgeCriteria();
+                    agecriteria.setAgeGroup("Age Group 2");
+                    agecriteria.setAgecriteriaId(2);
+                    userService.saveAgeCriteria(agecriteria);
+                    agecriteria = null;
+                }
+
+                if(group3 == true){
+                    AgeCriteria agecriteria = new AgeCriteria();
+                    agecriteria.setAgeGroup("Age Group 3");
+                    agecriteria.setAgecriteriaId(3);
+                    userService.saveAgeCriteria(agecriteria);
+                    agecriteria = null;
+                }
+
+                if(group4 == true){
+                    AgeCriteria agecriteria = new AgeCriteria();
+                    agecriteria.setAgeGroup("Age Group 4");
+                    agecriteria.setAgecriteriaId(4);
+                    userService.saveAgeCriteria(agecriteria);
+                    agecriteria = null;
+                }
+
+                if(group5 == true){
+                    AgeCriteria agecriteria = new AgeCriteria();
+                    agecriteria.setAgeGroup("Age Group 5");
+                    agecriteria.setAgecriteriaId(5);
+                    userService.saveAgeCriteria(agecriteria);
+                    agecriteria = null;
+                }
+
+                if(group6 == true){
+                    AgeCriteria agecriteria = new AgeCriteria();
+                    agecriteria.setAgeGroup("Age Group 6");
+                    agecriteria.setAgecriteriaId(6);
+                    userService.saveAgeCriteria(agecriteria);
+                    agecriteria = null;
+                }
+            }
+        }
+    }
+
     public void findsimilarUsers(String currentuserId, HttpSession session){
         ArrayList<String> allusers = new ArrayList<>();
 //        ArrayList<User> users = userService.findOtherUser(currentuser);
@@ -617,7 +651,7 @@ public class UserController {
                 if (distancevalue[i] < distancevalue[j])
                 {
                     tempGenweight = distancevalue[i];
-                    tempuser = allusers.get(i);
+                    tempuser = arrUser[i];
                     distancevalue[i] = distancevalue[j];
                     arrUser[i] = arrUser[j];
                     distancevalue[j] = tempGenweight;
@@ -635,7 +669,7 @@ public class UserController {
         }
 
         for (int i = 0; i < distancevalue.length; i++) {
-            System.out.println(distancevalue[i]);
+            System.out.println(arrUser[i]+"xxxx"+distancevalue[i]);
         }
         session.setAttribute("similarusers", twosimusers);
         session.setAttribute("distancevalue", twodistancevalue);
@@ -670,72 +704,13 @@ public class UserController {
 
     public float computeInitialVideoWeight(VideoDetails video, User user){
         System.out.println(video.getTitle()+"==========="+video.getLikes());
+        int agegroup = user.getAgecriteriaId();
+        AgeCriteria useragegroup = userService.findByAgeCriteriaId(agegroup);
+        float totalviews = useragegroup.getAlternativeMusic() + useragegroup.getCountryMusic() + useragegroup.getHiphopMusic() + useragegroup.getHouseMusic() + useragegroup.getPopMusic() + useragegroup.getReggaeMusic() + useragegroup.getReligiousMusic() + useragegroup.getRnbMusic() + useragegroup.getRockMusic();
         float vidWeight;
         float userInput = 0;
 
         float genreAgePop,genreAgeRock, genreAgeAlt, genreAgeRBS, genreAgeCntry, genreAgeHouse, genreAgeReg, genreAgeRel, genreAgeHH;
-
-        if(user.getUserAge()<=24){
-            genreAgePop = (float) 10.0;
-            genreAgeRock = (float) 8.0;
-            genreAgeHH = (float) 8.0;
-            genreAgeAlt = (float) 6.0;
-            genreAgeRBS = (float) 6.0;
-            genreAgeCntry = (float) 2.0;
-            genreAgeHouse = (float) 2.0;
-            genreAgeReg = (float) 2.0;
-            genreAgeRel = (float) 2.0;
-        }else if(user.getUserAge()>=25 && user.getUserAge()<=34){
-            genreAgePop = (float) 10.0;
-            genreAgeRock = (float) 8.0;
-            genreAgeHH = (float) 6.0;
-            genreAgeAlt = (float) 4.0;
-            genreAgeCntry = (float) 4.0;
-            genreAgeRBS = (float) 2.0;
-            genreAgeHouse = (float) 2.0;
-            genreAgeReg = (float) 2.0;
-            genreAgeRel = (float) 2.0;
-        }else if(user.getUserAge()>=35 && user.getUserAge()<=44) {
-            genreAgeRock = (float) 10.0;
-            genreAgePop = (float) 8.0;
-            genreAgeCntry = (float) 6.0;
-            genreAgeAlt = (float) 4.0;
-            genreAgeHH = (float) 2.0;
-            genreAgeRBS = (float) 1.0;
-            genreAgeHouse = (float) 1.0;
-            genreAgeReg = (float) 1.0;
-            genreAgeRel = (float) 1.0;
-        }else if(user.getUserAge()>=45 && user.getUserAge()<=54) {
-            genreAgeRock = (float) 10.0;
-            genreAgePop = (float) 8.0;
-            genreAgeCntry = (float) 6.0;
-            genreAgeAlt = (float) 4.0;
-            genreAgeRBS = (float) 2.0;
-            genreAgeHH = (float) 1.0;
-            genreAgeHouse = (float) 1.0;
-            genreAgeReg = (float) 1.0;
-            genreAgeRel = (float) 1.0;
-        }else if(user.getUserAge()>=55 && user.getUserAge()<=64) {
-            genreAgeRock = (float) 10.0;
-            genreAgeCntry = (float) 8.0;
-            genreAgePop = (float) 6.0;
-            genreAgeRBS = (float) 4.0;
-            genreAgeAlt = (float) 2.0;
-            genreAgeHH = (float) 1.0;
-            genreAgeHouse = (float) 1.0;
-            genreAgeReg = (float) 1.0;
-            genreAgeRel = (float) 1.0;
-        }else{
-            genreAgeRock = (float) 10.0;
-            genreAgeCntry = (float) 8.0;
-            genreAgePop = (float) 8.0;
-            genreAgeRBS = (float) 6.0;
-            genreAgeAlt = (float) 4.0;
-            genreAgeHH = (float) 2.0;
-            genreAgeHouse = (float) 1.0;
-            genreAgeReg = (float) 1.0;
-            genreAgeRel = (float) 1.0;
-        }
 
         float genrePTPop,genrePTRock, genrePTAlt, genrePTRBS, genrePTCntry, genrePTHouse, genrePTReg, genrePTRel, genrePTHH;
 
@@ -770,6 +745,7 @@ public class UserController {
 
         float genreAge = 0;
         float genrePT =0;
+        int genreid = 0;
 //
 //        userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),1);
 //        System.out.println("prefweight:" + userInput.getPrefWeight());
@@ -778,51 +754,64 @@ public class UserController {
 //        upPop = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),1).getPrefWeight();
 //
 
-        if(video.getGenre().equals("Pop Music")){
+        if(video.getGenre().equals("Pop Music") && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),1).getPrefWeight();
-            genreAge = genreAgePop;
+            genreid = 1;
+            genreAge = useragegroup.getPopMusic()/totalviews;
             genrePT = genrePTPop;
         }
-        if(video.getGenre().equals("Rock Music")){
+        if(video.getGenre().equals("Rock Music") && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),2).getPrefWeight();
-            genreAge = genreAgeRock;
+            genreid = 2;
+            genreAge = useragegroup.getRockMusic()/totalviews;
             genrePT = genrePTRock;
         }
 
-        if(video.getGenre().equals("Alternative Music")){
+        if(video.getGenre().equals("Alternative Music") && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),3).getPrefWeight();
-            genreAge = genreAgeAlt;
+            genreid = 3;
+            genreAge = useragegroup.getAlternativeMusic()/totalviews;
             genrePT = genrePTAlt;
         }
-        if(video.getGenre().equals("R&B/Soul Music")){
+        if(video.getGenre().equals("R&B/Soul Music") && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),4).getPrefWeight();
-            genreAge = genreAgeRBS;
+            genreid = 4;
+            genreAge = useragegroup.getRnbMusic()/totalviews;
             genrePT = genrePTRBS;
         }
-        if(video.getGenre().equals("Country Music")){
+        if(video.getGenre().equals("Country Music") && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),5).getPrefWeight();
-            genreAge = genreAgeCntry;
+            genreid = 5;
+            genreAge = useragegroup.getCountryMusic()/totalviews;
             genrePT = genrePTCntry;
         }
-        if(video.getGenre().equals("House Music")){
+        if(video.getGenre().equals("House Music") && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),6).getPrefWeight();
-            genreAge = genreAgeHouse;
+            genreid = 6;
+            genreAge = useragegroup.getCountryMusic()/totalviews;
             genrePT = genrePTHouse;
         }
-        if(video.getGenre().equals("Reggae Music")){
+        if(video.getGenre().equals("Reggae Music") && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),7).getPrefWeight();
-            genreAge = genreAgeReg;
+            genreid = 7;
+            genreAge = useragegroup.getReggaeMusic()/totalviews;
             genrePT = genrePTReg;
         }
-        if(video.getGenre().equals("Religious Music")){
+        if(video.getGenre().equals("Religious Music") && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),8).getPrefWeight();
-            genreAge = genreAgeRel;
+            genreid = 8;
+            genreAge = useragegroup.getReligiousMusic()/totalviews;
             genrePT = genrePTRel;
         }
-        if(video.getGenre().equals("Hip-Hop/Rap Music")){
+        if(video.getGenre().equals("Hip-Hop/Rap Music") && totalviews != 9){
             userInput = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(),9).getPrefWeight();
-            genreAge = genreAgeHH;
+            genreid = 9;
+            genreAge = useragegroup.getHiphopMusic()/totalviews;
             genrePT = genrePTHH;
+        }
+
+        if(totalviews == 9){
+            genreAge = 1;
         }
 
         float uipercent, agepercent,pertypepercent;
@@ -854,6 +843,7 @@ public class UserController {
         }else{
              likes = Float.parseFloat(video.getLikes().toString());
         }
+        System.out.println("Total: "+totalviews);
         System.out.println("UI PERCENTAGE : " + uipercent);
         System.out.println("UI PERCENTAGE : " + agepercent);
         System.out.println("UI PERCENTAGE : " + pertypepercent);
@@ -861,14 +851,14 @@ public class UserController {
         System.out.println(genreAge);
         System.out.println(genrePT);
 
-
+        float genreweight = ((userInput/10)*uipercent)+((genreAge/10)*agepercent)+((genrePT/10)*pertypepercent);
         vidWeight= (float) ((((userInput/10)*uipercent)+((genreAge/10)*agepercent)+((genrePT/10)*pertypepercent))*likes);
         System.out.println("VID WEIGHT : " + vidWeight);
 
+        UserPreference userpref = userService.findUserPreferenceByUserIdAndGenreId(user.getUserId(), genreid);
+        userpref.setGenreWeight(genreweight);
+        userService.saveUserPreference(userpref);
         return vidWeight;
-
-
-
     }
 
 
@@ -936,9 +926,14 @@ public class UserController {
 
     @RequestMapping("/submitrating")
     public String submitRating(HttpServletRequest request, Model model, HttpSession session){
+        int useragegroup = (Integer) session.getAttribute("useragegroup");
         String vididtoplay = request.getParameter("current");
         String vididnexttoplay = request.getParameter("clicked");
         String vidrating = request.getParameter("rating");
+
+        VideoDetails video = videoService.findByVideoid(vididtoplay);
+        incrementagegroup(useragegroup, video.getGenre());
+
         List<UserHistory> currentuserhist = videoService.findAllByUserIdandVideoid(session.getAttribute("userid").toString(), vididtoplay);
 
         try{
@@ -1022,6 +1017,38 @@ public class UserController {
         model.addAttribute("tn3", thumbnail3);
 
         return "VideoPlayerV2";
+    }
+
+    public void incrementagegroup(int agegroup, String genre){
+        AgeCriteria agecriteria = userService.findByAgeCriteriaId(agegroup);
+        if(genre.contains("Pop")){
+            agecriteria.setPopMusic(agecriteria.getPopMusic()+1);
+        }
+        if(genre.contains("House")){
+            agecriteria.setPopMusic(agecriteria.getHouseMusic()+1);
+        }
+        if(genre.contains("Alternative")){
+            agecriteria.setPopMusic(agecriteria.getAlternativeMusic()+1);
+        }
+        if(genre.contains("Reggae")){
+            agecriteria.setPopMusic(agecriteria.getReggaeMusic()+1);
+        }
+        if(genre.contains("R&B/Soul")){
+            agecriteria.setPopMusic(agecriteria.getRnbMusic()+1);
+        }
+        if(genre.contains("Religious")){
+            agecriteria.setPopMusic(agecriteria.getReligiousMusic()+1);
+        }
+        if(genre.contains("Country")){
+            agecriteria.setPopMusic(agecriteria.getCountryMusic()+1);
+        }
+        if(genre.contains("Rock")){
+            agecriteria.setPopMusic(agecriteria.getRockMusic()+1);
+        }
+        if(genre.contains("Hip-Hop/Rap")){
+            agecriteria.setPopMusic(agecriteria.getHiphopMusic()+1);
+        }
+        userService.saveAgeCriteria(agecriteria);
     }
 
     public String[] cosineMatrix(String currentuserId){

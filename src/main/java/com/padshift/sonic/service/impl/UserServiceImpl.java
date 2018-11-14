@@ -1,13 +1,7 @@
 package com.padshift.sonic.service.impl;
 
-import com.padshift.sonic.entities.Criteria;
-import com.padshift.sonic.entities.User;
-import com.padshift.sonic.entities.UserHistory;
-import com.padshift.sonic.entities.UserPreference;
-import com.padshift.sonic.repository.CriteriaRepository;
-import com.padshift.sonic.repository.UserHistoryRepository;
-import com.padshift.sonic.repository.UserPreferenceRepository;
-import com.padshift.sonic.repository.UserRepository;
+import com.padshift.sonic.entities.*;
+import com.padshift.sonic.repository.*;
 import com.padshift.sonic.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,14 +27,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     CriteriaRepository criteriaRepository;
 
+    @Autowired
+    AgeCriteriaRepository agecriteriaRepository;
 
     @Override
     public void saveUser(User user) {
         userRepository.save(user);
     }
-
-
-
 
     @Override
     public void saveUserPreference(UserPreference userpref) {
@@ -146,5 +139,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public ArrayList<Integer> findDistinctUserfromUserPref(int currentuserId) {
         return userPreferenceRepository.findDistinctUserfromUserPref(currentuserId);
+    }
+
+    @Override
+    public ArrayList<AgeCriteria> findAllAgeCriteria() {
+        return (ArrayList<AgeCriteria>) agecriteriaRepository.findAll();
+    }
+
+    @Override
+    public ArrayList<Integer> findDistinctAgeGroup() {
+        return userRepository.findDistinctAgeGroup();
+    }
+
+    @Override
+    public void saveAgeCriteria(AgeCriteria agecriteria) {
+        agecriteriaRepository.save(agecriteria);
+    }
+
+    @Override
+    public AgeCriteria findByAgeCriteriaId(int agegroup) {
+        return agecriteriaRepository.findByAgecriteriaId(agegroup);
     }
 }

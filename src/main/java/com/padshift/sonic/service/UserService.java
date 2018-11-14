@@ -1,9 +1,6 @@
 package com.padshift.sonic.service;
 
-import com.padshift.sonic.entities.Criteria;
-import com.padshift.sonic.entities.User;
-import com.padshift.sonic.entities.UserHistory;
-import com.padshift.sonic.entities.UserPreference;
+import com.padshift.sonic.entities.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -66,4 +63,12 @@ public interface UserService {
     int findUserIdByUserId(int currentuserId);
 
     ArrayList<Integer> findDistinctUserfromUserPref(int currentuserId);
+
+    ArrayList<AgeCriteria> findAllAgeCriteria();
+
+    ArrayList<Integer> findDistinctAgeGroup();
+
+    void saveAgeCriteria(AgeCriteria agecriteria);
+
+    AgeCriteria findByAgeCriteriaId(int agegroup);
 }

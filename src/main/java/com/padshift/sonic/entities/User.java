@@ -32,6 +32,9 @@ public class User implements Serializable {
     @Column(name = "userAge")
     private int userAge;
 
+    @Column(name = "agecriteriaId")
+    private int agecriteriaId;
+
     public String getUserPersonality() {
         return userPersonality;
     }
@@ -80,6 +83,11 @@ public class User implements Serializable {
         this.userPass = userPass;
     }
 
+    public int getAgecriteriaId() {
+        return agecriteriaId;
+    }
 
-
+    public void setAgecriteriaId(int agecriteriaId) {
+        this.agecriteriaId = agecriteriaId;
+    }
 }

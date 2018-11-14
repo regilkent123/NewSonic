@@ -113,4 +113,9 @@ public class VideoServiceImpl implements VideoService {
         vidRatingsRepository.save(newrating);
     }
 
+    @Override
+    public Genre findByGenreName(String genre) {
+        return genreRepository.findByGenreName(genre);
+    }
+
 }

@@ -47,4 +47,6 @@ public interface VideoService {
     VidRatings findVidRatByUserIdandVideoid(String userId, String vidId);
 
     void saveVidrating(VidRatings newrating);
+
+    Genre findByGenreName(String genre);
 }

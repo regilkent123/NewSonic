@@ -32,4 +32,6 @@ public interface UserPreferenceRepository extends JpaRepository<UserPreference,L
 
     @Query("select distinct userId from UserPreference where userId <> :currentuserid")
     ArrayList<Integer> findDistinctUserfromUserPref(@Param("currentuserid") int currentuserId);
+
+    UserPreference findByGenreNameAndUserId(String genre, int s);
 }

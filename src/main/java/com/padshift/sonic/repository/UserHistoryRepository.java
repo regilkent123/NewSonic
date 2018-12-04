@@ -22,14 +22,8 @@ public interface UserHistoryRepository extends JpaRepository<UserHistory,Long> {
     @Query("select distinct videoid from UserHistory")
     ArrayList<String> findDistinctVid();
 
-    @Query("select distinct vidRating from UserHistory where userId = :userid and videoid = :vidid")
-    String findRatingByUserIdAndVideoid(@Param("userid") String userId, @Param("vidid") String vidId);
-
     @Query("select distinct userId from UserHistory where userId <> :currentuser")
     ArrayList<String> findDistinctUser(@Param("currentuser") String currentuserId);
-
-    @Query("select distinct userName from UserHistory where userId = :currentuser")
-    String findUserByUserId(@Param("currentuser") String currentuserId);
 
     @Query("select distinct userId from UserHistory where userId = :currentuserid")
     String findCurrentByUserId(@Param("currentuserid") String currentuserId);

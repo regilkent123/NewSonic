@@ -52,8 +52,6 @@ public interface UserService {
 
     ArrayList<User> findAll();
 
-    String findUserByUserId(String userId);
-
     String findCurrentByUserId(String currentuserId);
 
     ArrayList<Integer> findDistinctGenre();
@@ -71,4 +69,12 @@ public interface UserService {
     void saveAgeCriteria(AgeCriteria agecriteria);
 
     AgeCriteria findByAgeCriteriaId(int agegroup);
+
+    PersonalityCriteria findByPersonalityCriteriaId(int i);
+
+    ArrayList<Integer> findDistinctPersonalityGroup();
+
+    void savePersonalityCriteria(PersonalityCriteria personalitycriteria);
+
+    ArrayList<PersonalityCriteria> findAllPersonality();
 }

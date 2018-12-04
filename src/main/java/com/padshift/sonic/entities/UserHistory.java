@@ -27,9 +27,6 @@ public class UserHistory implements Serializable{
     @Column(name="seqid")
     private String seqid;
 
-    @Column(name="vidRating")
-    private String vidRating;
-
     public String getSeqid() {
         return seqid;
     }
@@ -62,11 +59,4 @@ public class UserHistory implements Serializable{
         this.userName = userName;
     }
 
-    public String getVidRating() {
-        return vidRating;
-    }
-
-    public void setVidRating(String vidRating) {
-        this.vidRating = vidRating;
-    }
 }

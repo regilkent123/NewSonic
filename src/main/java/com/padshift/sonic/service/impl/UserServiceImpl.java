@@ -30,6 +30,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     AgeCriteriaRepository agecriteriaRepository;
 
+    @Autowired
+    PersonalityCriteriaRepository personalitycriteriaRepository;
+
     @Override
     public void saveUser(User user) {
         userRepository.save(user);
@@ -112,11 +115,6 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public String findUserByUserId(String userId) {
-        return userHistoryRepository.findUserByUserId(userId);
-    }
-
-    @Override
     public String findCurrentByUserId(String currentuserId) {
         return userHistoryRepository.findCurrentByUserId(currentuserId);
     }
@@ -159,5 +157,25 @@ public class UserServiceImpl implements UserService {
     @Override
     public AgeCriteria findByAgeCriteriaId(int agegroup) {
         return agecriteriaRepository.findByAgecriteriaId(agegroup);
+    }
+
+    @Override
+    public PersonalityCriteria findByPersonalityCriteriaId(int i) {
+        return personalitycriteriaRepository.findByPersonalitycriteriaId(i);
+    }
+
+    @Override
+    public ArrayList<Integer> findDistinctPersonalityGroup() {
+        return userRepository.findDistinctPersonalityGroup();
+    }
+
+    @Override
+    public void savePersonalityCriteria(PersonalityCriteria personalitycriteria) {
+        personalitycriteriaRepository.save(personalitycriteria);
+    }
+
+    @Override
+    public ArrayList<PersonalityCriteria> findAllPersonality() {
+        return (ArrayList<PersonalityCriteria>) personalitycriteriaRepository.findAll();
     }
 }

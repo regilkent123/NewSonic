@@ -41,12 +41,18 @@ public interface VideoService {
     ArrayList<String> findDistinctVid();
 
     String findByUserIdandVideoid(String userId, String vidId);
-    
-    
 
     VidRatings findVidRatByUserIdandVideoid(String userId, String vidId);
 
     void saveVidrating(VidRatings newrating);
 
     Genre findByGenreName(String genre);
+
+    ArrayList<String> findDistinctVidfromVidrating();
+
+    ArrayList<String> findDistinctUser(String currentuserId);
+
+    UserPreference findgenreWeightByGenreNameandUserId(String genre, String s);
+
+    VidRatings findRatingByUserIdandVideoid(String s, String videoid);
 }

@@ -28,4 +28,7 @@ public interface UserRepository extends JpaRepository<User,Long>  {
 
     @Query("select distinct agecriteriaId from User")
     ArrayList<Integer> findDistinctAgeGroup();
+
+    @Query("select distinct personalitycriteriaId from User")
+    ArrayList<Integer> findDistinctPersonalityGroup();
 }

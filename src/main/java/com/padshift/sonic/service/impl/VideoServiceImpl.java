@@ -29,6 +29,9 @@ public class VideoServiceImpl implements VideoService {
     @Autowired
     public VidRatingsRepository vidRatingsRepository;
 
+    @Autowired
+    public UserPreferenceRepository userPreferenceRepository;
+
 
     @Override
     public void saveVideo(Video video) {
@@ -100,7 +103,7 @@ public class VideoServiceImpl implements VideoService {
 
     @Override
     public String findByUserIdandVideoid(String userId, String vidId) {
-        return userHistoryRepository.findRatingByUserIdAndVideoid(userId, vidId);
+        return vidRatingsRepository.findRatingByUserIdAndVideoid(userId, vidId);
     }
 
     @Override
@@ -116,6 +119,26 @@ public class VideoServiceImpl implements VideoService {
     @Override
     public Genre findByGenreName(String genre) {
         return genreRepository.findByGenreName(genre);
+    }
+
+    @Override
+    public ArrayList<String> findDistinctVidfromVidrating() {
+        return vidRatingsRepository.findDistinctVid();
+    }
+
+    @Override
+    public ArrayList<String> findDistinctUser(String currentuserId) {
+        return vidRatingsRepository.findDistinctUser(currentuserId);
+    }
+
+    @Override
+    public UserPreference findgenreWeightByGenreNameandUserId(String genre, String s) {
+        return userPreferenceRepository.findByGenreNameAndUserId(genre, Integer.parseInt(s));
+    }
+
+    @Override
+    public VidRatings findRatingByUserIdandVideoid(String s, String videoid) {
+        return vidRatingsRepository.findByUserIdAndVideoid(s, videoid);
     }
 
 }

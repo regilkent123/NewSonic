@@ -35,6 +35,9 @@ public class User implements Serializable {
     @Column(name = "agecriteriaId")
     private int agecriteriaId;
 
+    @Column(name = "personalitycriteriaId")
+    private int personalitycriteriaId;
+
     public String getUserPersonality() {
         return userPersonality;
     }
@@ -89,5 +92,13 @@ public class User implements Serializable {
 
     public void setAgecriteriaId(int agecriteriaId) {
         this.agecriteriaId = agecriteriaId;
+    }
+
+    public int getPersonalitycriteriaId() {
+        return personalitycriteriaId;
+    }
+
+    public void setPersonalitycriteriaId(int personalitycriteriaId) {
+        this.personalitycriteriaId = personalitycriteriaId;
     }
 }

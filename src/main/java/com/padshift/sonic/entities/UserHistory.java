@@ -27,6 +27,19 @@ public class UserHistory implements Serializable{
     @Column(name="seqid")
     private String seqid;
 
+    @Column(name="viewingStatus")
+    private String viewingStatus;
+
+    @Column(name="timeSpent")
+    private String timeSpent;
+
+
+    @Column(name = "viewingDate")
+    private String viewingDate;
+
+    @Column(name="viewingTime")
+    private String viewingTime;
+
     public String getSeqid() {
         return seqid;
     }
@@ -59,4 +72,35 @@ public class UserHistory implements Serializable{
         this.userName = userName;
     }
 
+    public String getViewingStatus() {
+        return viewingStatus;
+    }
+
+    public void setViewingStatus(String viewingStatus) {
+        this.viewingStatus = viewingStatus;
+    }
+
+    public String getTimeSpent() {
+        return timeSpent;
+    }
+
+    public void setTimeSpent(String timeSpent) {
+        this.timeSpent = timeSpent;
+    }
+
+    public String getViewingDate() {
+        return viewingDate;
+    }
+
+    public void setViewingDate(String viewingDate) {
+        this.viewingDate = viewingDate;
+    }
+
+    public String getViewingTime() {
+        return viewingTime;
+    }
+
+    public void setViewingTime(String viewingTime) {
+        this.viewingTime = viewingTime;
+    }
 }

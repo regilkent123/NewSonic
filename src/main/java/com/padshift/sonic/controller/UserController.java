@@ -39,7 +39,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.time.LocalDate;
 import java.util.*;
 
 /**
@@ -169,6 +171,18 @@ public class UserController {
 
     }
 
+    public static LocalDate getLocalDate() {
+        return LocalDate.now();
+    }
+
+    public static String getTime(){
+        final long CURRENT_TIME_MILLIS = System.currentTimeMillis();
+        Date instant = new Date(CURRENT_TIME_MILLIS);
+        SimpleDateFormat sdf = new SimpleDateFormat( "HH:mm:ss" );
+        String time = sdf.format( instant );
+        System.out.println( "Time: " + time );
+        return time.toString();
+    }
 
     @RequestMapping("/genreselection")
     public String showGenreSelection(Model model, HttpSession session){
@@ -910,17 +924,35 @@ public class UserController {
     @RequestMapping("/gotoPlayer")
     public String gotoPlayer(HttpServletRequest request, Model model, HttpSession session){
         String vididtoplay = request.getParameter("clicked");
+        String videoWatched = request.getParameter("videoWatched");
+
+//        if(videoWatched!=null && Float.parseFloat(request.getParameter("timeSpent").toString())>0){
+//            UserHistory userhist = new UserHistory();
+//            userhist.setUserId(session.getAttribute("userid").toString());
+//            userhist.setVideoid(videoWatched);
+//            userhist.setSeqid(session.getAttribute("sessionid").toString());
+//            userhist.setViewingDate(getLocalDate().toString());
+//            userhist.setViewingTime(getTime());
+//            userhist.setTimeSpent(request.getParameter("timeSpent").toString());
+//            if(Float.parseFloat(request.getParameter("timeSpent").toString())>120) {
+//                userhist.setViewingStatus("1");
+//            }else{
+//                userhist.setViewingStatus("0");
+//            }
+//            userService.saveUserHistory(userhist);
+//        }
+
         session.setAttribute("vididtoplay", vididtoplay);
 
         System.out.println("video id : " + vididtoplay);
         System.out.println("aaaaaaaaaaa" + session.getAttribute("userid"));
 
-        UserHistory userhist = new UserHistory();
-        userhist.setUserId(session.getAttribute("userid").toString());
-        userhist.setVideoid(vididtoplay);
-        userhist.setSeqid(session.getAttribute("sessionid").toString());
-        userhist.setUserName(session.getAttribute("username").toString());
-        userService.saveUserHistory(userhist);
+//        UserHistory userhist = new UserHistory();
+//        userhist.setUserId(session.getAttribute("userid").toString());
+//        userhist.setVideoid(vididtoplay);
+//        userhist.setSeqid(session.getAttribute("sessionid").toString());
+//        userhist.setUserName(session.getAttribute("username").toString());
+//        userService.saveUserHistory(userhist);
 
 
         VideoDetails playvid = videoService.findByVideoid(vididtoplay);
@@ -949,6 +981,7 @@ public class UserController {
         model.addAttribute("r1", vr1);
 
         model.addAttribute("emblink", url);
+        model.addAttribute("vididtoplay", playvid.getVideoid());
         model.addAttribute("vidtitle", playvid.getTitle());
         model.addAttribute("vidviews", concat(playvid.getViewCount()));
         model.addAttribute("vidlikes", concat(playvid.getLikes()));
@@ -976,6 +1009,24 @@ public class UserController {
         String vididnexttoplay = request.getParameter("clicked");
         String vidrating = request.getParameter("rating");
         VideoDetails video = videoService.findByVideoid(vididtoplay);
+        String videoWatched = request.getParameter("videoWatched");
+
+        if(videoWatched!=null && Float.parseFloat(request.getParameter("timeSpent").toString())>0){
+            UserHistory userhist = new UserHistory();
+            userhist.setUserId(session.getAttribute("userid").toString());
+            userhist.setVideoid(videoWatched);
+            userhist.setSeqid(session.getAttribute("sessionid").toString());
+            userhist.setViewingDate(getLocalDate().toString());
+            userhist.setViewingTime(getTime());
+            userhist.setTimeSpent(request.getParameter("timeSpent").toString());
+            if(Float.parseFloat(request.getParameter("timeSpent").toString())>120) {
+                userhist.setViewingStatus("1");
+            }else{
+                userhist.setViewingStatus("0");
+            }
+            userService.saveUserHistory(userhist);
+        }
+
         try{
             Genre findgenre = videoService.findByGenreName(video.getGenre());
             UserPreference userpref = userService.findUserPreferenceByUserIdAndGenreId((Integer) session.getAttribute("userid"), findgenre.getGenreId());
@@ -1048,6 +1099,7 @@ public class UserController {
         model.addAttribute("r1", vr1);
 
         model.addAttribute("emblink", url);
+        model.addAttribute("vididtoplay", playvid.getVideoid());
         model.addAttribute("vidtitle", playvid.getTitle());
         model.addAttribute("vidviews", concat(playvid.getViewCount()));
         model.addAttribute("vidlikes", concat(playvid.getLikes()));
